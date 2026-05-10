@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>VERO | Your Professional E-commerce Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --gold: #F5B042;
+            --text-primary: #F1F5F9;
+            --text-muted: #94A3B8;
+            --card-glass: rgba(18, 22, 30, 0.85);
+        }
+        body {
+            background: radial-gradient(circle at 10% 20%, #0a0c13, #030507);
+            font-family: 'Cairo', sans-serif;
+            color: var(--text-primary);
+            direction: ltr;
+        }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 6%; background: rgba(9, 11, 18, 0.55); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 15px; }
+        .logo { display: flex; align-items: center; }
+        .logo-img { height: 55px; width: auto; border-radius: 8px; transition: 0.3s; }
+        .logo-img:hover { opacity: 0.9; transform: scale(1.02); }
+        .nav-links { display: flex; gap: 25px; align-items: center; flex-wrap: wrap; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-weight: 500; transition: 0.3s; }
+        .nav-links a:hover { color: var(--gold); }
+        .lang-switch { display: flex; gap: 5px; background: rgba(0,0,0,0.4); padding: 5px 10px; border-radius: 50px; }
+        .lang-btn { background: transparent; border: none; color: var(--text-muted); padding: 5px 12px; border-radius: 30px; cursor: pointer; font-size: 13px; text-decoration: none; display: inline-block; }
+        .lang-btn.active { background: var(--gold); color: #0a0c13; }
+        .btn-outline-light { border: 1px solid rgba(245,176,66,0.5); padding: 8px 20px; border-radius: 40px; color: var(--gold); text-decoration: none; }
+        .hero { display: flex; align-items: center; padding: 70px 6%; gap: 50px; flex-wrap: wrap; }
+        .hero-content { flex: 1; }
+        .hero-content h1 { font-size: 3rem; margin-bottom: 20px; }
+        .hero-content h1 span { color: var(--gold); }
+        .hero-desc { color: var(--text-muted); margin-bottom: 30px; line-height: 1.6; }
+        .btn-gold { background: var(--gold); padding: 12px 28px; border-radius: 40px; color: #0a0c13; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .btn-gold:hover { background: #e0a132; transform: scale(1.02); }
+        .btn-dark { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); padding: 12px 28px; border-radius: 40px; color: white; text-decoration: none; transition: 0.3s; }
+        .btn-dark:hover { background: rgba(255,255,255,0.12); border-color: var(--gold); }
+        .hero-stats { display: flex; gap: 35px; margin-top: 40px; }
+        .stat h4 { color: var(--gold); font-size: 1.8rem; }
+        .hero-image img { width: 100%; max-width: 450px; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.6)); }
+        .services { padding: 80px 6%; text-align: center; }
+        .section-title { font-size: 2.2rem; margin-bottom: 15px; }
+        .features-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; margin-top: 50px; }
+        .feature-card { background: var(--card-glass); backdrop-filter: blur(8px); border-radius: 30px; padding: 30px; width: 270px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
+        .feature-card:hover { transform: translateY(-8px); border-color: var(--gold); }
+        .feature-icon { font-size: 2.5rem; color: var(--gold); margin-bottom: 15px; }
+        .pricing { padding: 70px 6%; }
+        .plans-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
+        .plan-card { background: var(--card-glass); backdrop-filter: blur(8px); border-radius: 40px; padding: 30px 25px; width: 320px; border: 1px solid rgba(255,255,255,0.08); transition: 0.4s; position: relative; }
+        .plan-card:hover { transform: translateY(-10px); border-color: var(--accent-color); }
+        .plan-card[data-plan="easy"] { --accent-color: #2DD4BF; }
+        .plan-card[data-plan="normal"] { --accent-color: #3B82F6; }
+        .plan-card[data-plan="full"] { --accent-color: #F97316; }
+        .plan-card[data-plan="premium"] { --accent-color: #F5B042; }
+        .card-badge { border: 1px solid var(--accent-color); display: inline-block; padding: 5px 15px; border-radius: 30px; font-size: 12px; color: var(--accent-color); margin-bottom: 15px; }
+        .price-tag { font-size: 2rem; font-weight: bold; margin: 15px 0; }
+        .price-tag .currency { font-size: 0.9rem; font-weight: normal; color: var(--text-muted); }
+        .features-list { list-style: none; margin: 20px 0; }
+        .features-list li { margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.85rem; }
+        .features-list li i { font-size: 1.2rem; width: 26px; color: var(--accent-color); }
+        .features-list .note { font-size: 0.75rem; color: #ff6b6b; margin-top: 8px; }
+        .btn-plan { display: block; text-align: center; background: rgba(255,255,255,0.05); padding: 12px; border-radius: 50px; text-decoration: none; color: white; margin-top: 20px; transition: 0.3s; }
+        .btn-plan:hover { background: var(--accent-color); color: #0a0c13; }
+        .crown-badge { position: absolute; top: 15px; right: 20px; background: var(--gold); color: #0a0c13; padding: 4px 12px; border-radius: 30px; font-size: 11px; display: flex; gap: 5px; }
+        .best-choice { position: absolute; top: -12px; right: 20px; background: #3B82F6; color: white; padding: 5px 15px; border-radius: 30px; font-size: 11px; font-weight: bold; display: flex; gap: 5px; box-shadow: 0 0 15px rgba(59,130,246,0.5); }
+        .cta { text-align: center; background: linear-gradient(120deg, #0e121c, #05080f); margin: 40px 6% 70px; border-radius: 50px; padding: 50px; border: 1px solid rgba(245,176,66,0.1); }
+        .info-note { background: rgba(0,0,0,0.3); border-radius: 20px; padding: 20px; margin: 20px 6% 0; text-align: center; border-left: 3px solid var(--gold); }
+        .info-note p { color: var(--text-muted); font-size: 0.85rem; }
+        .whatsapp-float { position: fixed; bottom: 25px; right: 25px; background: #25D366; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; color: white; text-decoration: none; z-index: 999; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(37,211,102,0.5); } 70% { box-shadow: 0 0 0 15px rgba(37,211,102,0); } 100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); } }
+        footer { text-align: center; padding: 40px; color: #4B5563; border-top: 1px solid rgba(255,255,255,0.05); }
+        @media (max-width: 800px) { .hero-content h1 { font-size: 2rem; } .logo-img { height: 45px; } .plan-card { width: 100%; max-width: 350px; } }
+    </style>
+</head>
+<body>
+    
+<header>
+    <div class="logo">
+        <img src="verologo.png" alt="VERO Logo" class="logo-img" onerror="this.src='https://placehold.co/200x60/0a0c13/F5B042?text=VERO'">
+    </div>
+    <div class="nav-links">
+        <a href="#">Home</a>
+        <a href="#plans">Plans</a>
+        <a href="#features">Features</a>
+        <a href="#contact" class="btn-outline-light">Contact Us</a>
+        <div class="lang-switch">
+            <a href="index.html" class="lang-btn">🇸🇦 عربي</a>
+            <a href="index_en.html" class="lang-btn active">🇬🇧 English</a>
+            <a href="index_bs.html" class="lang-btn">🇧🇦 Bosanski</a>
+        </div>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1><span>Building Your Store</span> On a Powerful Global Platform</h1>
+        <p class="hero-desc">Supporting e-payments, speed, and security, with full configuration according to your project.</p>
+        <div>
+            <a href="#plans" class="btn-gold"><i class="fas fa-arrow-down"></i> Explore Plans</a>
+            <a href="https://wa.me/971544364104" class="btn-dark"><i class="fab fa-whatsapp"></i> WhatsApp Us</a>
+        </div>
+        <div class="hero-stats">
+            <div class="stat"><h4>+20</h4><p>Successful Projects</p></div>
+            <div class="stat"><h4>4.9</h4><p>Client Rating</p></div>
+            <div class="stat"><h4>24/7</h4><p>Tech Support</p></div>
+        </div>
+    </div>
+    <div class="hero-image"><img src="  " alt="VERO" onerror="this.src='https://placehold.co/500x450/0a0c13/F5B042?text=VERO'"></div>
+</section>
+
+<section id="features" class="services">
+    <h2 class="section-title">Why Choose VERO</h2>
+    <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h4>Blazing Speed</h4><p>Optimized performance & fast loading</p></div>
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-mobile-alt"></i></div><h4>Responsive Design</h4><p>Works on all devices</p></div>
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h4>Advanced Analytics</h4><p>Accurate sales reports</p></div>
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-headset"></i></div><h4>24/7 Support</h4><p>Dedicated support team</p></div>
+    </div>
+</section>
+
+<section id="plans" class="pricing">
+    <h2 class="section-title" style="text-align:center;">Choose the Right Plan for Your Project</h2>
+    
+    <div class="plans-grid">
+        <!-- EASY PLAN -->
+        <div class="plan-card" data-plan="easy">
+            <div class="card-badge">🟢 EASY</div>
+            <h3>Smart Start</h3>
+            <div class="price-tag">410 - 545 <span class="currency">USD</span></div>
+            <ul class="features-list">
+                <li><i class="fas fa-check-circle"></i> Full store (simple pages)</li>
+                <li><i class="fas fa-check-circle"></i> Business Email</li>
+                <li><i class="fas fa-check-circle"></i> Responsive design (Mobile + Laptop)</li>
+                <li class="note"><i class="fas fa-exclamation-circle"></i> ❌ No logo, banner, or images included</li>
+                <li class="note"><i class="fas fa-user"></i> Client provides all content</li>
+            </ul>
+            <a href="https://wa.me/971544364104?text=I%20want%20Easy%20Plan" class="btn-plan"><i class="fab fa-whatsapp"></i> Order Now</a>
+        </div>
+
+        <!-- NORMAL PLAN - BEST CHOICE -->
+        <div class="plan-card" data-plan="normal">
+            <div class="best-choice"><i class="fas fa-star"></i> Best Choice</div>
+            <div class="card-badge">🔵 NORMAL</div>
+            <h3>Integrated Growth</h3>
+            <div class="price-tag">680 - 735 <span class="currency">USD</span></div>
+            <ul class="features-list">
+                <li><i class="fas fa-check-circle"></i> Everything in EASY</li>
+                <li><i class="fas fa-check-circle"></i> Simple logo design</li>
+                <li><i class="fas fa-check-circle"></i> Professional banner design</li>
+                <li><i class="fas fa-check-circle"></i> UI/UX improvements</li>
+                <li class="note"><i class="fas fa-exclamation-circle"></i> ❌ Client provides product images</li>
+            </ul>
+            <a href="https://wa.me/971544364104?text=I%20want%20Normal%20Plan" class="btn-plan"><i class="fab fa-whatsapp"></i> Order Now</a>
+        </div>
+
+        <!-- FULL PLAN -->
+        <div class="plan-card" data-plan="full">
+            <div class="card-badge">🔴 FULL</div>
+            <h3>Complete Solution 🔥</h3>
+            <div class="price-tag">870 - 1,035 <span class="currency">USD</span></div>
+            <ul class="features-list">
+                <li><i class="fas fa-check-circle"></i> Everything in NORMAL</li>
+                <li><i class="fas fa-check-circle"></i> 🔥 Professional logo</li>
+                <li><i class="fas fa-check-circle"></i> 🔥 Multiple banners</li>
+                <li><i class="fas fa-check-circle"></i> 🔥 Stock images included</li>
+                <li><i class="fas fa-check-circle"></i> 🔥 Basic content writing</li>
+                <li><i class="fas fa-check-circle"></i> Free revisions for 48 hours after delivery</li>
+                <li class="note"><i class="fas fa-check-circle" style="color: #22c55e;"></i> ✅ Ready to launch immediately</li>
+            </ul>
+            <a href="https://wa.me/971544364104?text=I%20want%20Full%20Plan" class="btn-plan"><i class="fab fa-whatsapp"></i> Order Now</a>
+        </div>
+
+        <!-- PREMIUM PLAN -->
+        <div class="plan-card" data-plan="premium">
+            <div class="crown-badge"><i class="fas fa-crown"></i> Most Powerful</div>
+            <div class="card-badge">✨ PREMIUM</div>
+            <h3>Custom Programming 🚀</h3>
+            <div class="price-tag">955 - 1,090 <span class="currency">USD</span></div>
+            <ul class="features-list">
+                <li><i class="fas fa-check-circle"></i> Everything in FULL</li>
+                <li><i class="fas fa-check-circle"></i> 🚀 Free revisions for 2 weeks</li>
+                <li><i class="fas fa-check-circle"></i> 🚀 Extra free revision next month</li>
+                <li><i class="fas fa-check-circle"></i> 🚀 Priority support</li>
+                <li><i class="fas fa-check-circle"></i> 🚀 Additional custom improvements</li>
+            </ul>
+            <a href="https://wa.me/971544364104?text=I%20want%20Premium%20Plan" class="btn-plan"><i class="fas fa-headset"></i> Contact Consultant</a>
+        </div>
+    </div>
+</section>
+
+<div class="info-note">
+    <p><i class="fas fa-info-circle"></i> 💡 Note: The store requires a monthly platform subscription (starting from approximately $30–40) plus an annual domain (about $15–20). We handle everything from start to finish.</p>
+    <p style="margin-top: 10px;"><i class="fas fa-edit"></i> ✏️ Custom modifications outside the package are priced upon request.</p>
+</div>
+
+<section id="contact" class="cta">
+    <h3>Ready to turn your idea into a successful store?</h3>
+    <p style="margin: 15px 0;">Contact our team now for a free consultation</p>
+    <a href="https://wa.me/971544364104" class="btn-gold"><i class="fab fa-whatsapp"></i> Start Your Project Now</a>
+</section>
+
+<footer><p>© 2025 VERO — Your Professional E-commerce Store. All rights reserved.</p></footer>
+<a href="https://wa.me/971544364104" class="whatsapp-float"><i class="fab fa-whatsapp"></i></a>
+
+</body>
+</html>
