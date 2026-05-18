@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>VERO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: radial-gradient(circle at 30% 20%, #0a0c13, #030507);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        .bg-animation span {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: rgba(245, 176, 66, 0.1);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatAround 12s infinite ease-in-out;
+        }
+        
+        @keyframes floatAround {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 0.4; }
+            100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+        }
+        
+        .splash-container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 40px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .logo {
+            margin-bottom: 40px;
+        }
+        
+        .logo-img {
+            height: 120px;
+            width: auto;
+            filter: drop-shadow(0 0 15px rgba(245, 176, 66, 0.3));
+            animation: gentlePulse 1.8s ease-in-out infinite;
+        }
+        
+        @keyframes gentlePulse {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+        
+        .smoke-effect {
+            width: 280px;
+            height: 100px;
+            margin: 20px auto;
+            background: radial-gradient(ellipse, rgba(245, 176, 66, 0.15) 0%, transparent 70%);
+            filter: blur(15px);
+            animation: smokeFloat 3s infinite alternate;
+        }
+        
+        @keyframes smokeFloat {
+            from { transform: scale(1) translateY(0); opacity: 0.4; }
+            to { transform: scale(1.2) translateY(-15px); opacity: 0.1; }
+        }
+        
+        .loading-text-container {
+            margin: 30px 0;
+        }
+        
+        .changing-text {
+            font-size: 1.1rem;
+            color: #F5B042;
+            font-weight: 400;
+            letter-spacing: 2px;
+            min-height: 60px;
+            transition: opacity 0.3s ease;
+        }
+        
+        .loading-dots {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .loading-dots span {
+            width: 10px;
+            height: 10px;
+            background: #F5B042;
+            border-radius: 50%;
+            animation: dotPulse 1.4s ease-in-out infinite;
+        }
+        
+        .loading-dots span:nth-child(1) { animation-delay: 0s; }
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes dotPulse {
+            0%, 60%, 100% { transform: scale(0.6); opacity: 0.4; }
+            30% { transform: scale(1.2); opacity: 1; }
+        }
+        
+        .timer-bar {
+            width: 250px;
+            height: 2px;
+            background: rgba(245, 176, 66, 0.2);
+            border-radius: 2px;
+            margin: 25px auto 0;
+            overflow: hidden;
+        }
+        
+        .timer-progress {
+            width: 100%;
+            height: 100%;
+            background: #F5B042;
+            animation: countdown 6s linear forwards;
+        }
+        
+        @keyframes countdown {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+        
+        .auto-redirect-text {
+            color: #94A3B8;
+            font-size: 0.75rem;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .logo-img { height: 80px; }
+            .changing-text { font-size: 0.9rem; }
+            .timer-bar { width: 180px; }
+            .smoke-effect { width: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-animation" id="bgAnimation"></div>
+
+<div class="splash-container">
+    <div class="logo">
+        <img src="verologo.png" alt="VERO" class="logo-img" onerror="this.src='https://placehold.co/200x120/0a0c13/F5B042?text=VERO'">
+    </div>
+    
+    <div class="smoke-effect"></div>
+    
+    <div class="loading-text-container">
+        <div class="changing-text" id="changingText">جاري تحميل التجربة</div>
+    </div>
+    
+    <div class="loading-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    
+    <div class="timer-bar">
+        <div class="timer-progress"></div>
+    </div>
+    
+    <div class="auto-redirect-text" id="autoText">سيتم التوجيه خلال 6 ثواني...</div>
+</div>
+
+<script>
+    const loadingMessages = [
+        "جاري تحميل التجربة",
+        "فتح الأبواب",
+        "نحن نجهز عالمك",
+        "مرحباً بك في VERO"
+    ];
+    
+    let messageIndex = 0;
+    let remainingSeconds = 6;
+    let countdownInterval;
+    let textInterval;
+    
+    function updateChangingText() {
+        const textElement = document.getElementById("changingText");
+        if (textElement) {
+            textElement.style.opacity = "0";
+            setTimeout(() => {
+                textElement.textContent = loadingMessages[messageIndex];
+                textElement.style.opacity = "1";
+            }, 150);
+        }
+        messageIndex = (messageIndex + 1) % loadingMessages.length;
+    }
+    
+    function updateTimerText() {
+        const autoText = document.getElementById("autoText");
+        autoText.textContent = `سيتم التوجيه خلال ${remainingSeconds} ثواني...`;
+    }
+    
+    function startCountdown() {
+        if (countdownInterval) clearInterval(countdownInterval);
+        remainingSeconds = 6;
+        updateTimerText();
+        
+        countdownInterval = setInterval(() => {
+            remainingSeconds--;
+            updateTimerText();
+            
+            if (remainingSeconds <= 0) {
+                clearInterval(countdownInterval);
+                window.location.href = "index.html";
+            }
+        }, 1000);
+    }
+    
+    function createBackground() {
+        const bg = document.getElementById("bgAnimation");
+        for (let i = 0; i < 60; i++) {
+            const span = document.createElement("span");
+            const size = Math.random() * 30 + 8;
+            span.style.width = size + "px";
+            span.style.height = size + "px";
+            span.style.left = Math.random() * 100 + "%";
+            span.style.animationDelay = Math.random() * 10 + "s";
+            span.style.animationDuration = Math.random() * 8 + 6 + "s";
+            bg.appendChild(span);
+        }
+    }
+    
+    window.addEventListener("load", () => {
+        createBackground();
+        textInterval = setInterval(updateChangingText, 1500);
+        startCountdown();
+    });
+</script>
+</body>
+</html>

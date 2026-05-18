@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | VERO - إدارة التقييمات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: radial-gradient(circle at 10% 20%, #0a0c13, #030507);
+            font-family: 'Cairo', sans-serif;
+            color: #F1F5F9;
+            direction: rtl;
+            padding: 40px 6%;
+        }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 15px; }
+        h1 { color: #F5B042; }
+        .btn-back { background: rgba(255,255,255,0.1); padding: 10px 25px; border-radius: 40px; text-decoration: none; color: white; transition: 0.3s; }
+        .btn-back:hover { background: #F5B042; color: #0a0c13; }
+        .reviews-table { background: rgba(18,22,30,0.85); border-radius: 20px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        th { background: #F5B042; color: #0a0c13; }
+        .delete-btn { background: #dc2626; color: white; border: none; padding: 8px 20px; border-radius: 25px; cursor: pointer; transition: 0.3s; }
+        .delete-btn:hover { background: #b91c1c; transform: scale(1.05); }
+        .empty-msg { text-align: center; padding: 40px; color: #94A3B8; }
+        .footer { text-align: center; margin-top: 40px; color: #4B5563; }
+        @media (max-width: 700px) { th, td { font-size: 12px; padding: 10px; } .delete-btn { padding: 5px 12px; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-shield-alt"></i> لوحة التحكم - إدارة التقييمات</h1>
+        <a href="index.html" class="btn-back"><i class="fas fa-arrow-right"></i> العودة للموقع</a>
+    </div>
+    
+    <div class="reviews-table">
+        <table>
+            <thead>
+                <tr><th>التقييم</th><th>الاسم</th><th>التعليق</th><th>التاريخ</th><th>إجراء</th></tr>
+            </thead>
+            <tbody id="reviewsList">
+                <tr class="empty-msg"><td colspan="5">جاري التحميل...</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="footer"><p>© 2025 VERO — يمكنك حذف أي تعليق غير لائق. التغييرات فورية.</p></div>
+
+    <script>
+        function loadReviews() {
+            const stored = localStorage.getItem('vero_reviews');
+            let reviews = stored ? JSON.parse(stored) : [];
+            const tbody = document.getElementById('reviewsList');
+            if (reviews.length === 0) {
+                tbody.innerHTML = '<tr class="empty-msg"><td colspan="5">📭 لا توجد تقييمات حالياً</td></tr>';
+                return;
+            }
+            tbody.innerHTML = reviews.map((review, index) => `
+                <tr>
+                    <td>${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}</td>
+                    <td>${escapeHtml(review.name)}</td>
+                    <td style="text-align:right">${escapeHtml(review.text)}</td>
+                    <td>${review.date}</td>
+                    <td><button class="delete-btn" onclick="deleteReview(${index})"><i class="fas fa-trash"></i> حذف</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function deleteReview(index) {
+            let reviews = JSON.parse(localStorage.getItem('vero_reviews') || '[]');
+            reviews.splice(index, 1);
+            localStorage.setItem('vero_reviews', JSON.stringify(reviews));
+            loadReviews();
+            if (window.opener && !window.opener.closed) {
+                window.opener.updateReviewsDisplay();
+            }
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        loadReviews();
+    </script>
+</body>
+</html>
