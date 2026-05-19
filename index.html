@@ -3,129 +3,321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>VERO | متجرك الإلكتروني الاحترافي</title>
+    <title>VERO | برمجة وتطوير مواقع احترافية</title>
+    <meta name="description" content="نقدم خدمات برمجة وتطوير مواقع احترافية، متاجر إلكترونية، واجهات مستخدم، حلول مخصصة تناسب احتياجاتك.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         :root {
             --gold: #F5B042;
-            --text-primary: #F1F5F9;
-            --text-muted: #94A3B8;
-            --card-glass: rgba(18, 22, 30, 0.85);
+            --gold-dark: #e0a132;
+            --black: #0A0A0F;
+            --black-light: #111118;
+            --gray: #94A3B8;
+            --white: #F1F5F9;
+            --card-glass: rgba(18,22,30,0.85);
         }
+        
         body {
             background: radial-gradient(circle at 10% 20%, #0a0c13, #030507);
             font-family: 'Cairo', sans-serif;
-            color: var(--text-primary);
+            color: var(--white);
             direction: rtl;
             overflow-x: hidden;
+            scroll-behavior: smooth;
         }
-        .animate-on-scroll { opacity: 0; transform: translateY(40px); transition: all 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1); }
-        .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
-        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 6%; background: rgba(9, 11, 18, 0.55); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 15px; }
-        .logo { display: flex; align-items: center; }
-        .logo-img { height: 90px; width: auto; border-radius: 8px; transition: 0.3s; }
+        
+        /* Loading Screen */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0c13;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        .loader.fade-out { opacity: 0; pointer-events: none; }
+        .spinner { width: 40px; height: 40px; border: 3px solid rgba(245,176,66,0.2); border-top: 3px solid #F5B042; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 6%;
+            background: rgba(9,11,18,0.55);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        header.scrolled { background: rgba(9,11,18,0.95); box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 12px 6%; }
+        .logo-img { height: 70px; width: auto; border-radius: 8px; transition: 0.3s; }
         .logo-img:hover { opacity: 0.9; transform: scale(1.02); }
         .nav-links { display: flex; gap: 25px; align-items: center; flex-wrap: wrap; }
-        .nav-links a { color: var(--text-muted); text-decoration: none; font-weight: 500; transition: 0.3s; }
+        .nav-links a { color: var(--gray); text-decoration: none; font-weight: 500; transition: 0.3s; }
         .nav-links a:hover { color: var(--gold); }
         .lang-switch { display: flex; gap: 5px; background: rgba(0,0,0,0.4); padding: 5px 10px; border-radius: 50px; }
-        .lang-btn { background: transparent; border: none; color: var(--text-muted); padding: 5px 12px; border-radius: 30px; cursor: pointer; font-size: 13px; text-decoration: none; display: inline-block; }
+        .lang-btn { background: transparent; border: none; color: var(--gray); padding: 5px 12px; border-radius: 30px; cursor: pointer; font-size: 13px; text-decoration: none; }
         .lang-btn.active { background: var(--gold); color: #0a0c13; }
         .btn-outline-light { border: 1px solid rgba(245,176,66,0.5); padding: 8px 20px; border-radius: 40px; color: var(--gold); text-decoration: none; }
-        .hero { display: flex; align-items: center; padding: 70px 6%; gap: 50px; flex-wrap: wrap; }
+        
+        /* Mobile Menu */
+        .menu-toggle { display: none; font-size: 1.5rem; cursor: pointer; color: var(--white); }
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 350px;
+            height: 100%;
+            background: rgba(10,10,15,0.98);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 80px 30px;
+            transition: 0.4s ease;
+        }
+        .mobile-menu.open { right: 0; }
+        .mobile-menu a { display: block; color: var(--white); text-decoration: none; padding: 15px 0; font-size: 1.1rem; transition: 0.3s; }
+        .mobile-menu a:hover { color: var(--gold); padding-right: 10px; }
+        .close-menu { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; cursor: pointer; color: var(--gold); }
+        
+        /* Hero Section */
+        .hero {
+            display: flex;
+            align-items: center;
+            padding: 100px 6% 80px;
+            gap: 60px;
+            flex-wrap: wrap;
+            min-height: 90vh;
+        }
         .hero-content { flex: 1; }
-        .hero-content h1 { font-size: 3rem; margin-bottom: 20px; }
+        .hero-content h1 { font-size: 3.8rem; margin-bottom: 25px; font-weight: 800; line-height: 1.2; }
         .hero-content h1 span { color: var(--gold); }
-        .hero-desc { color: var(--text-muted); margin-bottom: 30px; line-height: 1.6; }
-        .btn-gold { background: var(--gold); padding: 12px 28px; border-radius: 40px; color: #0a0c13; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 8px; transition: 0.3s; cursor: pointer; border: none; }
-        .btn-gold:hover { background: #e0a132; transform: scale(1.02); }
-        .btn-dark { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); padding: 12px 28px; border-radius: 40px; color: white; text-decoration: none; transition: 0.3s; display: inline-block; }
-        .btn-dark:hover { background: rgba(255,255,255,0.12); border-color: var(--gold); }
-        .hero-stats { display: flex; gap: 35px; margin-top: 40px; }
-        .stat h4 { color: var(--gold); font-size: 1.8rem; }
-        .hero-image img { width: 100%; max-width: 450px; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.6)); }
-        .services { padding: 80px 6%; text-align: center; }
-        .section-title { font-size: 2.2rem; margin-bottom: 15px; }
-        .features-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 25px; margin-top: 50px; }
-        .feature-card { background: var(--card-glass); backdrop-filter: blur(8px); border-radius: 30px; padding: 30px; width: 270px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
-        .feature-card:hover { transform: translateY(-8px); border-color: var(--gold); }
-        .feature-icon { font-size: 2.5rem; color: var(--gold); margin-bottom: 15px; }
-        .pricing { padding: 70px 6%; }
-        .plans-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
-        .plan-card { background: var(--card-glass); backdrop-filter: blur(8px); border-radius: 40px; padding: 30px 25px; width: 320px; border: 1px solid rgba(255,255,255,0.08); transition: 0.4s; position: relative; }
+        .hero-desc { color: var(--gray); margin-bottom: 35px; line-height: 1.6; font-size: 1.1rem; max-width: 550px; }
+        .btn-gold { background: var(--gold); padding: 14px 32px; border-radius: 50px; color: #0a0c13; text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 10px; transition: 0.3s; border: none; cursor: pointer; }
+        .btn-gold:hover { background: var(--gold-dark); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(245,176,66,0.4); }
+        .btn-outline { background: transparent; border: 2px solid var(--gold); padding: 12px 32px; border-radius: 50px; color: var(--gold); text-decoration: none; font-weight: 600; transition: 0.3s; display: inline-flex; align-items: center; gap: 10px; }
+        .btn-outline:hover { background: var(--gold); color: #0a0c13; transform: translateY(-3px); }
+        .hero-image { flex: 1; text-align: center; }
+        .hero-image img { width: 100%; max-width: 500px; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5)); }
+        
+        /* Stats Section */
+        .stats-section { padding: 60px 6%; text-align: center; }
+        .stats-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 50px; }
+        .stat-number { font-size: 2.5rem; font-weight: 800; color: var(--gold); }
+        .stat-label { color: var(--gray); font-size: 0.9rem; }
+        
+        /* Why Us Section */
+        .why-section { padding: 80px 6%; background: linear-gradient(135deg, var(--black-light), var(--black)); text-align: center; }
+        .section-title { font-size: 2.5rem; margin-bottom: 15px; font-weight: 700; }
+        .section-title span { color: var(--gold); }
+        .section-subtitle { color: var(--gray); margin-bottom: 50px; font-size: 1.1rem; }
+        .why-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin-top: 40px; }
+        .why-card { background: var(--card-glass); backdrop-filter: blur(8px); border-radius: 28px; padding: 35px 25px; width: 280px; text-align: center; transition: 0.3s; border: 1px solid rgba(255,255,255,0.05); }
+        .why-card:hover { transform: translateY(-8px); border-color: var(--gold); }
+        .why-icon { font-size: 2.5rem; color: var(--gold); margin-bottom: 20px; }
+        .why-card h3 { margin-bottom: 10px; }
+        .why-card p { color: var(--gray); font-size: 0.9rem; }
+        
+        /* Services Section with Swiper */
+        .services-section { padding: 80px 6%; text-align: center; position: relative; }
+        .services-slider-container { position: relative; max-width: 1200px; margin: 0 auto; }
+        .swiper-button-prev, .swiper-button-next {
+            color: var(--gold);
+            background: rgba(0,0,0,0.5);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        .swiper-button-prev:after, .swiper-button-next:after { font-size: 18px; }
+        .swiper-button-prev:hover, .swiper-button-next:hover { background: var(--gold); color: #0a0c13; }
+        .service-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 35px 25px;
+            text-align: center;
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
+            height: auto;
+        }
+        .service-card:hover { transform: translateY(-8px); border-color: var(--gold); }
+        .service-icon { font-size: 2.5rem; color: var(--gold); margin-bottom: 20px; }
+        .service-card h3 { margin-bottom: 10px; }
+        .service-card p { color: var(--gray); font-size: 0.9rem; }
+        
+        /* Pricing Section with Swiper for Mobile */
+        .pricing { padding: 80px 6%; background: linear-gradient(135deg, var(--black), var(--black-light)); text-align: center; }
+        .pricing-slider-container { position: relative; max-width: 1200px; margin: 0 auto; }
+        .plan-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(8px);
+            border-radius: 32px;
+            padding: 35px 25px;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: 0.4s;
+            position: relative;
+            text-align: center;
+            height: auto;
+        }
         .plan-card:hover { transform: translateY(-10px); border-color: var(--accent-color); }
         .plan-card[data-plan="easy"] { --accent-color: #2DD4BF; }
         .plan-card[data-plan="normal"] { --accent-color: #3B82F6; }
-        .plan-card[data-plan="full"] { --accent-color: #F97316; }
         .plan-card[data-plan="premium"] { --accent-color: #F5B042; }
-        .card-badge { border: 1px solid var(--accent-color); display: inline-block; padding: 5px 15px; border-radius: 30px; font-size: 12px; color: var(--accent-color); margin-bottom: 15px; }
+        .card-badge { border: 1px solid var(--accent-color); display: inline-block; padding: 5px 20px; border-radius: 40px; font-size: 12px; color: var(--accent-color); margin-bottom: 20px; }
         .price-tag { font-size: 2rem; font-weight: bold; margin: 15px 0; }
-        .price-tag .currency { font-size: 0.9rem; font-weight: normal; color: var(--text-muted); }
-        .features-list { list-style: none; margin: 20px 0; }
-        .features-list li { margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.85rem; }
-        .features-list li i { font-size: 1.2rem; width: 26px; color: var(--accent-color); }
-        .features-list .note { font-size: 0.75rem; color: #ff6b6b; margin-top: 8px; }
-        .btn-plan { display: block; text-align: center; background: rgba(255,255,255,0.05); padding: 12px; border-radius: 50px; text-decoration: none; color: white; margin-top: 20px; transition: 0.3s; }
+        .features-list { list-style: none; margin: 20px 0; text-align: right; }
+        .features-list li { margin-bottom: 12px; display: flex; align-items: center; gap: 10px; color: var(--gray); font-size: 0.9rem; }
+        .btn-plan { display: block; text-align: center; background: rgba(255,255,255,0.08); padding: 12px; border-radius: 50px; text-decoration: none; color: white; margin-top: 20px; transition: 0.3s; }
         .btn-plan:hover { background: var(--accent-color); color: #0a0c13; }
         .crown-badge { position: absolute; top: 15px; left: 20px; background: var(--gold); color: #0a0c13; padding: 4px 12px; border-radius: 30px; font-size: 11px; display: flex; gap: 5px; }
-        .best-choice { position: absolute; top: -12px; right: 20px; background: #3B82F6; color: white; padding: 5px 15px; border-radius: 30px; font-size: 11px; font-weight: bold; display: flex; gap: 5px; box-shadow: 0 0 15px rgba(59,130,246,0.5); }
-        .calculator-section { padding: 60px 6%; background: linear-gradient(135deg, #0e121c, #0a0c13); border-radius: 40px; margin: 40px 6%; }
-        .calculator-box { background: var(--card-glass); border-radius: 30px; padding: 30px; max-width: 500px; margin: 0 auto; }
-        .calc-options { margin: 20px 0; }
-        .calc-option { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap; gap: 10px; }
-        .calc-option select, .calc-option input[type="checkbox"] { background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 25px; color: white; font-family: 'Cairo', sans-serif; }
-        .calc-total { background: var(--gold); color: #0a0c13; padding: 20px; border-radius: 25px; text-align: center; margin-top: 20px; }
-        .calc-total h3 { font-size: 2rem; }
-        .platform-fees { background: rgba(0,0,0,0.4); border-radius: 20px; padding: 25px; margin-top: 25px; border-right: 3px solid var(--gold); }
-        .platform-fees h4 { color: var(--gold); margin-bottom: 10px; }
-        .platform-fees p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 8px; }
-        .reviews-section { padding: 80px 6%; }
-        .reviews-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin-top: 50px; }
-        .review-card { background: var(--card-glass); backdrop-filter: blur(8px); border-radius: 30px; padding: 25px; width: 350px; border: 1px solid rgba(255,255,255,0.05); }
-        .review-stars { color: var(--gold); margin-bottom: 12px; font-size: 1.2rem; }
-        .review-text { color: var(--text-muted); line-height: 1.6; margin-bottom: 15px; }
-        .review-author { font-weight: bold; color: var(--gold); }
-        .review-date { font-size: 0.7rem; color: var(--text-muted); }
-        .add-review { margin-top: 50px; max-width: 600px; margin-left: auto; margin-right: auto; background: var(--card-glass); padding: 30px; border-radius: 30px; }
-        .add-review h3 { margin-bottom: 20px; text-align: center; }
-        .star-rating { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; direction: ltr; }
+        .best-choice { position: absolute; top: -12px; right: 20px; background: #3B82F6; color: white; padding: 5px 15px; border-radius: 30px; font-size: 11px; font-weight: bold; box-shadow: 0 0 15px rgba(59,130,246,0.5); }
+        
+        /* Testimonials Section */
+        .testimonials-section { padding: 80px 6%; background: linear-gradient(135deg, var(--black-light), var(--black)); text-align: center; }
+        .testimonials-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; margin-top: 40px; }
+        .testimonial-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 30px;
+            width: 340px;
+            text-align: center;
+            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .testimonial-card:hover { transform: translateY(-8px); border-color: var(--gold); }
+        .testimonial-stars { color: var(--gold); margin-bottom: 15px; font-size: 1rem; }
+        .testimonial-text { color: var(--gray); font-size: 0.9rem; line-height: 1.6; margin-bottom: 15px; }
+        .testimonial-author { font-weight: bold; color: var(--gold); margin-top: 10px; }
+        
+        /* Add Review Form */
+        .add-review-section { padding: 80px 6%; text-align: center; }
+        .add-review-form {
+            max-width: 500px;
+            margin: 0 auto;
+            background: var(--card-glass);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 35px;
+            text-align: center;
+        }
+        .star-rating { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; direction: ltr; }
         .star-rating i { font-size: 2rem; color: #555; cursor: pointer; transition: 0.2s; }
         .star-rating i:hover, .star-rating i.active { color: var(--gold); }
-        .add-review input, .add-review textarea { width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 25px; color: white; font-family: 'Cairo', sans-serif; }
-        .countdown-section { background: linear-gradient(120deg, #0e121c, #05080f); margin: 40px 6%; border-radius: 40px; padding: 40px; text-align: center; border: 1px solid rgba(245,176,66,0.2); }
-        .timer { display: flex; justify-content: center; gap: 20px; margin-top: 20px; flex-wrap: wrap; }
-        .timer-box { background: var(--card-glass); padding: 20px; border-radius: 20px; min-width: 100px; }
-        .timer-box span { font-size: 2.5rem; font-weight: bold; color: var(--gold); }
-        .quick-order { padding: 60px 6%; background: linear-gradient(135deg, #0e121c, #0a0c13); border-radius: 40px; margin: 40px 6%; }
-        .order-form { max-width: 600px; margin: 0 auto; }
+        .add-review-form input, .add-review-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            color: white;
+            font-family: 'Cairo', sans-serif;
+        }
+        .add-review-form textarea { min-height: 100px; resize: vertical; }
+        
+        /* Contact Form */
+        .contact-section { padding: 80px 6%; }
+        .contact-form { max-width: 600px; margin: 0 auto; background: var(--card-glass); border-radius: 28px; padding: 40px; }
         .form-group { margin-bottom: 20px; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 25px; color: white; font-family: 'Cairo', sans-serif; }
-        .faq-section { padding: 80px 6%; }
-        .faq-grid { max-width: 800px; margin: 50px auto 0; }
-        .faq-item { background: var(--card-glass); border-radius: 20px; margin-bottom: 15px; overflow: hidden; }
-        .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
-        .faq-question i { transition: 0.3s; }
-        .faq-question.active i { transform: rotate(180deg); }
-        .faq-answer { padding: 0 20px; max-height: 0; overflow: hidden; transition: 0.3s; color: var(--text-muted); line-height: 1.6; }
-        .faq-answer.show { padding: 0 20px 20px; max-height: 300px; }
-        .cta { text-align: center; background: linear-gradient(120deg, #0e121c, #05080f); margin: 40px 6% 70px; border-radius: 50px; padding: 50px; border: 1px solid rgba(245,176,66,0.1); }
-        .info-note { background: rgba(0,0,0,0.3); border-radius: 20px; padding: 20px; margin: 20px 6% 0; text-align: center; border-right: 3px solid var(--gold); }
-        .whatsapp-float { position: fixed; bottom: 25px; left: 25px; background: #25D366; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; color: white; text-decoration: none; z-index: 999; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(37,211,102,0.5); } 70% { box-shadow: 0 0 0 15px rgba(37,211,102,0); } 100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); } }
-        footer { text-align: center; padding: 40px; color: #4B5563; border-top: 1px solid rgba(255,255,255,0.05); }
-        @media (max-width: 800px) { .hero-content h1 { font-size: 2rem; } .logo-img { height: 50px; } .plan-card { width: 100%; max-width: 350px; } .timer-box { min-width: 70px; padding: 15px; } .review-card { width: 100%; } }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; color: white; font-family: 'Cairo', sans-serif; }
+        
+        /* Footer */
+        footer { text-align: center; padding: 60px 6% 40px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .footer-info { margin-bottom: 20px; }
+        .footer-info p { color: var(--gray); margin: 8px 0; }
+        .footer-info i { color: var(--gold); margin-left: 8px; }
+        .copyright { color: #4B5563; font-size: 0.8rem; }
+        
+        /* WhatsApp Float */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            background: #25D366;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: white;
+            text-decoration: none;
+            z-index: 999;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(37,211,102,0.5); }
+            70% { box-shadow: 0 0 0 15px rgba(37,211,102,0); }
+            100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); }
+        }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #22c55e;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            z-index: 1100;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+            .menu-toggle { display: block; }
+            .hero-content h1 { font-size: 2rem; }
+            .hero { flex-direction: column; text-align: center; padding: 60px 6%; }
+            .section-title { font-size: 1.8rem; }
+            .why-card, .service-card, .plan-card, .testimonial-card { width: 100%; }
+            .stats-grid { gap: 30px; }
+            .stat-number { font-size: 1.8rem; }
+        }
+        
+        @media (min-width: 901px) {
+            .swiper-button-prev, .swiper-button-next { display: none; }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-content h1 { font-size: 1.6rem; }
+            .btn-gold, .btn-outline { padding: 10px 20px; font-size: 0.9rem; }
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo"><img src="verologo.png" alt="VERO Logo" class="logo-img" onerror="this.src='https://placehold.co/200x70/0a0c13/F5B042?text=VERO'"></div>
+<!-- Loading Screen -->
+<div class="loader" id="loader"><div class="spinner"></div></div>
+
+<header id="header">
+    <div class="logo">
+        <img src="verologo.png" alt="VERO" class="logo-img" loading="lazy" onerror="this.src='https://placehold.co/200x70/0a0c13/F5B042?text=VERO'">
+    </div>
+    <div class="menu-toggle"><i class="fas fa-bars"></i></div>
     <div class="nav-links">
-        <a href="#">الرئيسية</a>
-        <a href="#plans">الباقات</a>
-        <a href="#features">المميزات</a>
+        <a href="index.html">الرئيسية</a>
+        <a href="#services">الخدمات</a>
+        <a href="#pricing">الباقات</a>
         <a href="#contact" class="btn-outline-light">تواصل معنا</a>
         <div class="lang-switch">
             <a href="index.html" class="lang-btn active">🇸🇦 عربي</a>
@@ -135,225 +327,384 @@
     </div>
 </header>
 
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+    <div class="close-menu"><i class="fas fa-times"></i></div>
+    <a href="index.html">الرئيسية</a>
+    <a href="#services">الخدمات</a>
+    <a href="#pricing">الباقات</a>
+    <a href="#contact">تواصل معنا</a>
+</div>
+
+<!-- Hero Section -->
 <section class="hero">
     <div class="hero-content">
-        <h1><span>نبني لك متجراً</span> على منصة عالمية قوية</h1>
-        <p class="hero-desc">ندعم الدفع الإلكتروني، السرعة، والحماية، مع إعداد كامل حسب مشروعك.</p>
+        <h1>نبني <span>حضورك الرقمي</span><br>بأحدث تقنيات البرمجة</h1>
+        <p class="hero-desc">نقدم خدمات برمجة وتطوير مواقع احترافية، متاجر إلكترونية، واجهات مستخدم، وحلول مخصصة تناسب احتياجات عملك.</p>
         <div>
-            <a href="#plans" class="btn-gold"><i class="fas fa-arrow-down"></i> استكشف الباقات</a>
-            <a href="https://wa.me/971544364104" class="btn-dark"><i class="fab fa-whatsapp"></i> تواصل واتساب</a>
-        </div>
-        <div class="hero-stats">
-            <div class="stat"><h4>+20</h4><p>مشروع ناجح</p></div>
-            <div class="stat"><h4>4.9</h4><p>تقييم العملاء</p></div>
-            <div class="stat"><h4>24/7</h4><p>دعم فني</p></div>
+            <a href="#contact" class="btn-gold"><i class="fas fa-rocket"></i> ابدأ مشروعك</a>
+            <a href="#pricing" class="btn-outline"><i class="fas fa-arrow-down"></i> استكشف الباقات</a>
         </div>
     </div>
-    <div class="hero-image"><img src="arab_banner.png" alt="VERO" onerror="this.src='https://placehold.co/500x450/0a0c13/F5B042?text=VERO'"></div>
-</section>
-
-<section id="features" class="services animate-on-scroll">
-    <h2 class="section-title">لماذا تختار VERO</h2>
-    <div class="features-grid">
-        <div class="feature-card"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h4>سرعة فائقة</h4><p>أداء محسن وتحميل سريع</p></div>
-        <div class="feature-card"><div class="feature-icon"><i class="fas fa-mobile-alt"></i></div><h4>تصميم متجاوب</h4><p>يعمل على جميع الأجهزة</p></div>
-        <div class="feature-card"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h4>تحليلات متقدمة</h4><p>تقارير مبيعات دقيقة</p></div>
-        <div class="feature-card"><div class="feature-icon"><i class="fas fa-headset"></i></div><h4>دعم 24/7</h4><p>فريق دعم متخصص</p></div>
+    <div class="hero-image">
+        <img src="arab_banner.png" alt="VERO" loading="lazy" onerror="this.src='https://placehold.co/500x450/0a0c13/F5B042?text=VERO'">
     </div>
 </section>
 
-<section id="plans" class="pricing">
-    <h2 class="section-title" style="text-align:center;">اختر الباقة المناسبة لمشروعك</h2>
-    <div class="plans-grid">
-        <div class="plan-card animate-on-scroll" data-plan="easy">
-            <div class="card-badge">🟢 EASY</div>
-            <h3>بداية ذكية</h3>
-            <div class="price-tag">1,000 - 1,500 <span class="currency">درهم</span></div>
-            <ul class="features-list"><li><i class="fas fa-check-circle"></i> متجر كامل (صفحات بسيطة)</li><li><i class="fas fa-check-circle"></i> Business Email</li><li><i class="fas fa-check-circle"></i> تصميم متجاوب</li><li class="note">❌ لا يشمل لوجو، بنر، أو صور</li><li class="note">العميل يوفر كل المحتوى</li></ul>
-            <a href="https://wa.me/971544364104?text=طلب%20باقة%20Easy" class="btn-plan"><i class="fab fa-whatsapp"></i> اطلب الباقة</a>
-        </div>
-        <div class="plan-card animate-on-scroll" data-plan="normal">
-            <div class="best-choice"><i class="fas fa-star"></i> الأكثر طلباً</div>
-            <div class="card-badge">🔵 NORMAL</div>
-            <h3>نمو متكامل</h3>
-            <div class="price-tag">2,000 - 2,200 <span class="currency">درهم</span></div>
-            <ul class="features-list"><li><i class="fas fa-check-circle"></i> كل شيء في EASY</li><li><i class="fas fa-check-circle"></i> تصميم لوجو بسيط</li><li><i class="fas fa-check-circle"></i> تصميم بنر احترافي</li><li><i class="fas fa-check-circle"></i> تحسين التصميم (UI/UX)</li><li class="note">❌ العميل يوفر صور المنتجات</li></ul>
-            <a href="https://wa.me/971544364104?text=طلب%20باقة%20Normal" class="btn-plan"><i class="fab fa-whatsapp"></i> اطلب الباقة</a>
-        </div>
-        <div class="plan-card animate-on-scroll" data-plan="full">
-            <div class="card-badge">🔴 FULL</div>
-            <h3>حل متكامل 🔥</h3>
-            <div class="price-tag">2,700 - 3,300 <span class="currency">درهم</span></div>
-            <ul class="features-list"><li><i class="fas fa-check-circle"></i> كل شيء في NORMAL</li><li><i class="fas fa-check-circle"></i> 🔥 لوجو احترافي</li><li><i class="fas fa-check-circle"></i> 🔥 بنرات متعددة</li><li><i class="fas fa-check-circle"></i> 🔥 صور جاهزة (Stock)</li><li><i class="fas fa-check-circle"></i> 🔥 كتابة محتوى بسيط</li><li><i class="fas fa-check-circle"></i> تعديلات مجانية 48 ساعة بعد التسليم</li><li class="note">✅ جاهز للإطلاق مباشرة</li></ul>
-            <a href="https://wa.me/971544364104?text=طلب%20باقة%20Full" class="btn-plan"><i class="fab fa-whatsapp"></i> اطلب الباقة</a>
-        </div>
-        <div class="plan-card animate-on-scroll" data-plan="premium">
-            <div class="crown-badge"><i class="fas fa-crown"></i> الأقوى</div>
-            <div class="card-badge">✨ PREMIUM</div>
-            <h3>برمجة خاصة 🚀</h3>
-            <div class="price-tag">3,500 - 4,000 <span class="currency">درهم</span></div>
-            <ul class="features-list"><li><i class="fas fa-check-circle"></i> كل شيء في FULL</li><li><i class="fas fa-check-circle"></i> 🚀 تعديل مجاني لمدة أسبوعين</li><li><i class="fas fa-check-circle"></i> 🚀 تعديل إضافي مجاني خلال الشهر التالي</li><li><i class="fas fa-check-circle"></i> 🚀 أولوية دعم</li><li><i class="fas fa-check-circle"></i> 🚀 تحسينات إضافية حسب الطلب</li></ul>
-            <a href="https://wa.me/971544364104?text=طلب%20باقة%20Premium" class="btn-plan"><i class="fas fa-headset"></i> تواصل مع مستشارك</a>
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="stats-grid">
+        <div class="stat-card"><div class="stat-number counter" data-target="12">0</div><div class="stat-label">مشروع مكتمل</div></div>
+        <div class="stat-card"><div class="stat-number counter" data-target="12">0</div><div class="stat-label">عميل سعيد</div></div>
+        <div class="stat-card"><div class="stat-number">24/7</div><div class="stat-label">دعم فني</div></div>
+    </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="why-section">
+    <h2 class="section-title">لماذا <span>تختار VERO؟</span></h2>
+    <div class="why-grid">
+        <div class="why-card"><div class="why-icon"><i class="fas fa-bolt"></i></div><h3>سرعة فائقة</h3><p>أكواد نظيفة وسريعة التحميل</p></div>
+        <div class="why-card"><div class="why-icon"><i class="fas fa-mobile-alt"></i></div><h3>تصميم متجاوب</h3><p>يعمل على جميع الأجهزة</p></div>
+        <div class="why-card"><div class="why-icon"><i class="fas fa-headset"></i></div><h3>دعم 24/7</h3><p>فريق دعم متخصص</p></div>
+    </div>
+</section>
+
+<!-- Services Section with Swiper - يتم تحميلها من localStorage -->
+<section class="services-section" id="services">
+    <h2 class="section-title">خدماتنا <span>الاحترافية</span></h2>
+    <p class="section-subtitle">نقدم لك حلولاً متكاملة تناسب احتياجاتك</p>
+    <div class="services-slider-container">
+        <div class="swiper services-swiper">
+            <div class="swiper-wrapper" id="servicesContainer">
+                <!-- سيتم تحميل الخدمات من localStorage -->
+            </div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
         </div>
     </div>
 </section>
 
-<!-- Calculator -->
-<section class="calculator-section animate-on-scroll">
-    <div class="calculator-box">
-        <h3 style="text-align:center;"><i class="fas fa-calculator"></i> احسب سعر مشروعك</h3>
-        <div class="calc-options">
-            <div class="calc-option"><label>اختر الباقة:</label><select id="planSelect"><option value="1250">Easy (1,000-1,500) - متوسط 1,250</option><option value="2100">Normal (2,000-2,200) - متوسط 2,100</option><option value="3000">Full (2,700-3,300) - متوسط 3,000</option><option value="3750">Premium (3,500-4,000) - متوسط 3,750</option></select></div>
-            <div class="calc-option"><label><i class="fas fa-palette"></i> تصميم لوجو إضافي:</label><input type="checkbox" id="logoCheckbox"> +300 درهم</div>
-            <div class="calc-option"><label><i class="fas fa-images"></i> صور احترافية (ستوك):</label><input type="checkbox" id="imagesCheckbox"> +500 درهم</div>
-            <div class="calc-option"><label><i class="fas fa-rocket"></i> دعم سريع (أولوية):</label><input type="checkbox" id="supportCheckbox"> +200 درهم</div>
+<!-- Pricing Section with Swiper for Mobile - يتم تحميلها من localStorage -->
+<section class="pricing" id="pricing">
+    <h2 class="section-title">اختر <span>الباقة المناسبة</span></h2>
+    <div class="pricing-slider-container">
+        <div class="swiper pricing-swiper">
+            <div class="swiper-wrapper" id="plansContainer">
+                <!-- سيتم تحميل الباقات من localStorage -->
+            </div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
         </div>
-        <div class="calc-total"><h3>السعر الإجمالي: <span id="totalPrice">1,250</span> درهم</h3><p>(شامل الضريبة، الدفع عند الاتفاق)</p></div>
-        <div class="platform-fees"><h4><i class="fas fa-info-circle"></i> ملاحظات مهمة:</h4><p><i class="fab fa-shopify"></i> <strong>رسوم Shopify / Zid:</strong> 30-50 دولار شهرياً + 2.4%-2.9% عمولة</p><p><i class="fab fa-stripe"></i> <strong>رسوم Stripe:</strong> 2.9% + 0.30 دولار لكل معاملة</p><p><i class="fas fa-file-alt"></i> <strong>⚠️ الرخصة التجارية:</strong> لا يمكن تفعيل بوابات الدفع إلا برخصة تجارية سارية</p></div>
     </div>
 </section>
 
-<!-- Countdown -->
-<section class="countdown-section animate-on-scroll">
-    <h3><i class="fas fa-gift"></i> عرض خاص! خصم 15% لأول 5 عملاء</h3>
-    <p style="color: var(--text-muted); margin: 15px 0;">العرض ينتهي خلال:</p>
-    <div class="timer" id="timer"><div class="timer-box"><span id="days">00</span><p>يوم</p></div><div class="timer-box"><span id="hours">00</span><p>ساعة</p></div><div class="timer-box"><span id="minutes">00</span><p>دقيقة</p></div><div class="timer-box"><span id="seconds">00</span><p>ثانية</p></div></div>
-    <a href="https://wa.me/971544364104?text=أريد%20الاستفادة%20من%20الخصم%2015%25" class="btn-gold" style="margin-top:25px; display:inline-block;"><i class="fab fa-whatsapp"></i> احصل على الخصم الآن</a>
-</section>
-
-<!-- Reviews Section -->
-<section class="reviews-section animate-on-scroll" id="reviews">
-    <h2 class="section-title">آراء وتجارب عملائنا</h2>
-    <div class="reviews-grid" id="reviewsContainer"></div>
-    <div class="add-review"><h3><i class="fas fa-edit"></i> شاركنا تجربتك</h3>
-        <div class="star-rating" id="starRating"><i class="far fa-star" data-rating="1"></i><i class="far fa-star" data-rating="2"></i><i class="far fa-star" data-rating="3"></i><i class="far fa-star" data-rating="4"></i><i class="far fa-star" data-rating="5"></i></div>
-        <input type="text" id="reviewName" placeholder="اسمك"><textarea id="reviewText" placeholder="شاركنا رأيك عن الخدمة..."></textarea>
-        <button id="submitReview" class="btn-gold" style="width:100%;"><i class="fas fa-paper-plane"></i> إرسال التقييم</button>
+<!-- Testimonials Section - يتم تحميلها من localStorage -->
+<section class="testimonials-section" id="testimonials">
+    <h2 class="section-title">آراء <span>عملائنا</span></h2>
+    <p class="section-subtitle">ما يقوله عملاؤنا عن تجربتهم مع VERO</p>
+    <div class="testimonials-grid" id="reviewsContainer">
+        <!-- سيتم تحميل التقييمات من localStorage -->
     </div>
 </section>
 
-<!-- Quick Order -->
-<section class="quick-order animate-on-scroll" id="quickOrder">
-    <h2 class="section-title" style="text-align:center;">طلب سريع</h2>
-    <p style="text-align:center; color: var(--text-muted); margin-bottom: 30px;">املأ البيانات وسنقوم بالتواصل معك خلال 24 ساعة</p>
-    <form class="order-form" id="orderForm">
-        <div class="form-group"><input type="text" id="name" placeholder="الاسم الكامل" required></div>
-        <div class="form-group"><input type="tel" id="phone" placeholder="رقم الهاتف" required></div>
-        <div class="form-group"><input type="email" id="email" placeholder="البريد الإلكتروني"></div>
-        <div class="form-group"><select id="selectedPlan"><option value="">اختر الباقة المناسبة</option><option>Easy - 1,000-1,500 درهم</option><option>Normal - 2,000-2,200 درهم</option><option>Full - 2,700-3,300 درهم</option><option>Premium - 3,500-4,000 درهم</option></select></div>
-        <div class="form-group"><textarea id="message" placeholder="أضف أي ملاحظات إضافية..."></textarea></div>
-        <button type="submit" class="btn-gold" style="width:100%; border:none; cursor:pointer;"><i class="fab fa-whatsapp"></i> إرسال الطلب</button>
+<!-- Add Review Section -->
+<section class="add-review-section" id="addReview">
+    <h2 class="section-title">شاركنا <span>رأيك</span></h2>
+    <p class="section-subtitle">نقدر رأيك ونسعى دائماً للأفضل</p>
+    <div class="add-review-form">
+        <div class="star-rating" id="starRating">
+            <i class="far fa-star" data-rating="1"></i>
+            <i class="far fa-star" data-rating="2"></i>
+            <i class="far fa-star" data-rating="3"></i>
+            <i class="far fa-star" data-rating="4"></i>
+            <i class="far fa-star" data-rating="5"></i>
+        </div>
+        <input type="text" id="reviewerName" placeholder="اسمك">
+        <textarea id="reviewerComment" rows="3" placeholder="شاركنا تجربتك مع VERO..."></textarea>
+        <button id="submitReviewBtn" class="btn-gold" style="width:100%;"><i class="fas fa-paper-plane"></i> إرسال التقييم</button>
+    </div>
+</section>
+
+<!-- Contact Form -->
+<section class="contact-section" id="contact">
+    <h2 class="section-title">تواصل <span>معنا</span></h2>
+    <p class="section-subtitle">اترك رسالتك وسنرد عليك خلال 24 ساعة</p>
+    <form class="contact-form" id="contactForm">
+        <div class="form-group"><input type="text" id="contactName" placeholder="الاسم الكامل" required></div>
+        <div class="form-group"><input type="tel" id="contactPhone" placeholder="رقم الهاتف" required></div>
+        <div class="form-group"><input type="email" id="contactEmail" placeholder="البريد الإلكتروني"></div>
+        <div class="form-group"><select id="contactProject"><option value="">نوع المشروع</option><option>متجر إلكتروني</option><option>موقع شركة</option><option>منصة خدمات</option><option>تطبيق ويب</option></select></div>
+        <div class="form-group"><textarea id="contactMsg" rows="3" placeholder="وصف المشروع"></textarea></div>
+        <button type="submit" class="btn-gold" style="width:100%;"><i class="fas fa-paper-plane"></i> إرسال الطلب</button>
     </form>
 </section>
 
-<!-- FAQ -->
-<section class="faq-section animate-on-scroll">
-    <h2 class="section-title" style="text-align:center;">الأسئلة الشائعة</h2>
-    <div class="faq-grid">
-        <div class="faq-item"><div class="faq-question">ما هي المدة اللازمة لإنشاء المتجر؟ <i class="fas fa-chevron-down"></i></div><div class="faq-answer">عادةً 3 إلى 7 أيام عمل حسب الباقة.</div></div>
-        <div class="faq-item"><div class="faq-question">هل تشمل الأسعار الاستضافة والدومين؟ <i class="fas fa-chevron-down"></i></div><div class="faq-answer">لا، الأسعار لا تشمل اشتراك Shopify/Zid الشهري ولا الدومين السنوي.</div></div>
-        <div class="faq-item"><div class="faq-question">هل أحتاج رخصة تجارية؟ <i class="fas fa-chevron-down"></i></div><div class="faq-answer">نعم، بوابات الدفع تتطلب رخصة تجارية سارية. نساعدك في الإجراءات.</div></div>
-        <div class="faq-item"><div class="faq-question">ما هي رسوم Shopify و Stripe؟ <i class="fas fa-chevron-down"></i></div><div class="faq-answer">Shopify: 30-50$ شهرياً + 2.4%-2.9% عمولة. Stripe: 2.9% + 0.30$ لكل معاملة.</div></div>
+<footer>
+    <div class="footer-info">
+        <p><i class="fas fa-envelope"></i> verocomps1@gmail.com</p>
+        <p><i class="fab fa-whatsapp"></i> +971 54 436 4104</p>
     </div>
-</section>
+    <div class="copyright">© 2025 VERO — جميع الحقوق محفوظة</div>
+</footer>
 
-<div class="info-note"><p><i class="fas fa-info-circle"></i> 💡 ملاحظة: المتجر يحتاج اشتراكاً شهرياً للمنصة (100–150 درهم) + دومين سنوي (50–70 درهم).</p><p style="margin-top:10px;">✏️ التعديلات خارج الباقة يتم تسعيرها حسب الطلب</p></div>
-
-<section id="contact" class="cta animate-on-scroll">
-    <h3>جاهز لتحويل فكرتك إلى متجر ناجح؟</h3>
-    <p style="margin:15px 0;">تواصل مع فريقنا الآن واحصل على استشارة مجانية</p>
-    <a href="https://wa.me/971544364104" class="btn-gold"><i class="fab fa-whatsapp"></i> ابدأ مشروعك الآن</a>
-</section>
-
-<footer><p>© 2025 VERO — متجرك الإلكتروني الاحترافي. جميع الحقوق محفوظة</p></footer>
 <a href="https://wa.me/971544364104" class="whatsapp-float"><i class="fab fa-whatsapp"></i></a>
 
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
-    // Calculator
-    const planSelect = document.getElementById('planSelect');
-    const logoCheckbox = document.getElementById('logoCheckbox');
-    const imagesCheckbox = document.getElementById('imagesCheckbox');
-    const supportCheckbox = document.getElementById('supportCheckbox');
-    const totalPriceSpan = document.getElementById('totalPrice');
-    function updateTotal() { let base = parseInt(planSelect.value); if(logoCheckbox.checked) base+=300; if(imagesCheckbox.checked) base+=500; if(supportCheckbox.checked) base+=200; totalPriceSpan.textContent = base; }
-    planSelect.addEventListener('change', updateTotal);
-    logoCheckbox.addEventListener('change', updateTotal);
-    imagesCheckbox.addEventListener('change', updateTotal);
-    supportCheckbox.addEventListener('change', updateTotal);
-    updateTotal();
-
-    // Countdown
-    function startCountdown() {
-        const target = new Date(); target.setDate(target.getDate()+7); target.setHours(23,59,59,999);
-        function update() { const now = new Date(); const diff = target-now; if(diff<=0){ document.getElementById('timer').innerHTML='<div class="timer-box"><span>انتهى العرض!</span></div>'; return; }
-        document.getElementById('days').textContent = String(Math.floor(diff/(1000*60*60*24))).padStart(2,'0');
-        document.getElementById('hours').textContent = String(Math.floor((diff%86400000)/3600000)).padStart(2,'0');
-        document.getElementById('minutes').textContent = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
-        document.getElementById('seconds').textContent = String(Math.floor((diff%60000)/1000)).padStart(2,'0'); }
-        update(); setInterval(update,1000);
+    // ==========================================
+    // تحميل الخدمات من localStorage (تدار من الأدمن)
+    // ==========================================
+    function loadServices() {
+        const container = document.getElementById('servicesContainer');
+        if(!container) return;
+        
+        let services = JSON.parse(localStorage.getItem('admin_services')) || [
+            { id: 1, icon: "fas fa-code", title: "تطوير المواقع", description: "تصميم متاجر إلكترونية احترافية" },
+            { id: 2, icon: "fas fa-paint-brush", title: "تصميم UX/UI", description: "واجهات مستخدم جذابة وسهلة" },
+            { id: 3, icon: "fas fa-chart-line", title: "تحسين SEO", description: "ظهور متجرك في نتائج البحث" },
+            { id: 4, icon: "fas fa-store", title: "متاجر إلكترونية", description: "متاجر كاملة مع بوابات دفع" }
+        ];
+        
+        container.innerHTML = services.map(service => `
+            <div class="swiper-slide">
+                <div class="service-card">
+                    <div class="service-icon"><i class="${service.icon}"></i></div>
+                    <h3>${service.title}</h3>
+                    <p>${service.description}</p>
+                </div>
+            </div>
+        `).join('');
     }
-    startCountdown();
-
-    // Quick Order
-    document.getElementById('orderForm')?.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const name = document.getElementById('name').value;
-        const phone = document.getElementById('phone').value;
-        const email = document.getElementById('email').value;
-        const plan = document.getElementById('selectedPlan').value;
-        const msg = document.getElementById('message').value;
-        window.open(`https://wa.me/971544364104?text=طلب جديد:%0Aالاسم: ${name}%0Aالهاتف: ${phone}%0Aالبريد: ${email}%0Aالباقة: ${plan}%0Aالملاحظات: ${msg}`, '_blank');
-    });
-
-    // FAQ Accordion
-    document.querySelectorAll('.faq-question').forEach(q => {
-        q.addEventListener('click', () => {
-            const ans = q.nextElementSibling;
-            const active = q.classList.contains('active');
-            document.querySelectorAll('.faq-question').forEach(qq => { qq.classList.remove('active'); qq.nextElementSibling.classList.remove('show'); });
-            if(!active) { q.classList.add('active'); ans.classList.add('show'); }
-        });
-    });
-
-    // Scroll Animations
-    const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } }); }, { threshold: 0.1 });
-    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
-
-    // Reviews System
+    
+    // ==========================================
+    // تحميل الباقات من localStorage (تدار من الأدمن)
+    // ==========================================
+    function loadPlans() {
+        const container = document.getElementById('plansContainer');
+        if(!container) return;
+        
+        // الباقات الافتراضية (يمكن تعديلها من الأدمن)
+        const plans = [
+            { id: "easy", name: "بداية ذكية", badge: "🟢 EASY", price: "1,000 - 1,500 درهم", features: ["موقع تعريف بسيط", "تصميم متجاوب", "3 صفحات داخلية"], note: "❌ لا يشمل لوجو أو صور" },
+            { id: "normal", name: "متجر إلكتروني", badge: "🔵 NORMAL", price: "2,000 - 2,500 درهم", features: ["متجر كامل متكامل", "ربط بوابات دفع", "لوحة تحكم", "شحن وتوصيل"], isBest: true },
+            { id: "premium", name: "حل متكامل", badge: "✨ PREMIUM", price: "3,500 - 5,000 درهم", features: ["كل شيء في NORMAL", "تصميم هوية متكاملة", "SEO متقدم", "دعم أولوية"], isCrown: true }
+        ];
+        
+        container.innerHTML = plans.map(plan => `
+            <div class="swiper-slide">
+                <div class="plan-card" data-plan="${plan.id}">
+                    ${plan.isBest ? '<div class="best-choice"><i class="fas fa-star"></i> الأكثر طلباً</div>' : ''}
+                    ${plan.isCrown ? '<div class="crown-badge"><i class="fas fa-crown"></i> الأقوى</div>' : ''}
+                    <div class="card-badge">${plan.badge}</div>
+                    <h3>${plan.name}</h3>
+                    <div class="price-tag">${plan.price}</div>
+                    <ul class="features-list">
+                        ${plan.features.map(f => `<li><i class="fas fa-check-circle"></i> ${f}</li>`).join('')}
+                        ${plan.note ? `<li style="color: #ff6b6b;">${plan.note}</li>` : ''}
+                    </ul>
+                    <a href="https://wa.me/971544364104?text=طلب%20باقة%20${plan.id === 'easy' ? 'Easy' : plan.id === 'normal' ? 'Normal' : 'Premium'}" class="btn-plan"><i class="fab fa-whatsapp"></i> اطلب الباقة</a>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    // ==========================================
+    // تحميل التقييمات من localStorage (تدار من الأدمن)
+    // ==========================================
+    function loadReviews() {
+        const stored = localStorage.getItem('admin_reviews');
+        let reviews = stored ? JSON.parse(stored) : [];
+        const container = document.getElementById('reviewsContainer');
+        if(!container) return;
+        
+        // التقييمات المقبولة فقط
+        let approvedReviews = reviews.filter(r => r.status === 'approved');
+        
+        // إذا لا توجد تقييمات مقبولة، استخدم التقييمات الافتراضية
+        if(approvedReviews.length === 0) {
+            approvedReviews = [
+                { name: "أحمد محمد", text: "خدمة ممتازة وفريق محترف. المتجر شغال بشكل رائع وساعدني أزيد مبيعاتي!", rating: 5 },
+                { name: "سارة عبدالله", text: "التعامل راقي جداً والمهنية في العمل عالية. أنصح بالتعامل معهم بقوة!", rating: 5 },
+                { name: "محمد علي", text: "احترافية في العمل وسرعة في التنفيذ. موقعي اشتغل خلال 5 أيام فقط!", rating: 5 }
+            ];
+        }
+        
+        container.innerHTML = approvedReviews.slice(0, 6).map(r => `
+            <div class="testimonial-card">
+                <div class="testimonial-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                <p class="testimonial-text">"${r.text || r.comment}"</p>
+                <div class="testimonial-author">- ${r.name}</div>
+            </div>
+        `).join('');
+    }
+    
+    // ==========================================
+    // إضافة تقييم جديد (يحفظ في localStorage وينتظر الموافقة من الأدمن)
+    // ==========================================
     let selectedRating = 0;
     const stars = document.querySelectorAll('#starRating i');
     stars.forEach(star => {
-        star.addEventListener('click', function() { selectedRating = parseInt(this.dataset.rating); stars.forEach((s,i) => { if(i<selectedRating) s.className = 'fas fa-star'; else s.className = 'far fa-star'; }); });
-        star.addEventListener('mouseover', function() { const r = parseInt(this.dataset.rating); stars.forEach((s,i) => { if(i<r) s.className = 'fas fa-star'; else s.className = 'far fa-star'; }); });
-        star.addEventListener('mouseout', () => { stars.forEach((s,i) => { if(i<selectedRating) s.className = 'fas fa-star'; else s.className = 'far fa-star'; }); });
+        star.addEventListener('click', function() {
+            selectedRating = parseInt(this.getAttribute('data-rating'));
+            stars.forEach((s, i) => {
+                if(i < selectedRating) s.classList.add('active');
+                else s.classList.remove('active');
+            });
+        });
+        star.addEventListener('mouseover', function() {
+            const r = parseInt(this.getAttribute('data-rating'));
+            stars.forEach((s, i) => {
+                if(i < r) s.classList.add('active');
+                else s.classList.remove('active');
+            });
+        });
+        star.addEventListener('mouseout', function() {
+            stars.forEach((s, i) => {
+                if(i < selectedRating) s.classList.add('active');
+                else s.classList.remove('active');
+            });
+        });
     });
-
-    function loadReviews() {
-        const stored = localStorage.getItem('vero_reviews');
-        let reviews = stored ? JSON.parse(stored) : [];
-        const container = document.getElementById('reviewsContainer');
-        if(reviews.length === 0) { container.innerHTML = '<div style="text-align:center;padding:40px;color:#94A3B8;">📭 لا توجد تقييمات حالياً. كن أول من يشاركنا رأيه!</div>'; return; }
-        container.innerHTML = reviews.map(r => `<div class="review-card"><div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div><p class="review-text">"${escapeHtml(r.text)}"</p><div class="review-author">${escapeHtml(r.name)}</div><div class="review-date">${r.date}</div></div>`).join('');
+    
+    const submitBtn = document.getElementById('submitReviewBtn');
+    if(submitBtn) {
+        submitBtn.addEventListener('click', () => {
+            const name = document.getElementById('reviewerName').value.trim();
+            const text = document.getElementById('reviewerComment').value.trim();
+            
+            if(!name || !text || selectedRating === 0) {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.style.background = '#dc2626';
+                toast.innerHTML = '<i class="fas fa-exclamation-circle"></i> الرجاء إدخال اسمك وتقييمك وتعليقك';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+                return;
+            }
+            
+            // حفظ التقييم في localStorage (سيظهر في الأدمن للموافقة)
+            const reviews = JSON.parse(localStorage.getItem('admin_reviews') || '[]');
+            reviews.unshift({ 
+                name: name, 
+                comment: text, 
+                rating: selectedRating, 
+                status: "pending", 
+                date: new Date().toLocaleDateString() 
+            });
+            localStorage.setItem('admin_reviews', JSON.stringify(reviews));
+            
+            document.getElementById('reviewerName').value = '';
+            document.getElementById('reviewerComment').value = '';
+            selectedRating = 0;
+            stars.forEach(s => s.classList.remove('active'));
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = '<i class="fas fa-check-circle"></i> شكراً لمشاركتنا رأيك! سيتم مراجعته قريباً.';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        });
     }
-
-    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m) { if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m; }); }
-
-    window.updateReviewsDisplay = loadReviews;
-
-    document.getElementById('submitReview')?.addEventListener('click', function() {
-        const name = document.getElementById('reviewName').value.trim();
-        const text = document.getElementById('reviewText').value.trim();
-        if(!name || !text || selectedRating===0) { alert('الرجاء إدخال اسمك وتقييمك وتعليقك'); return; }
-        const reviews = JSON.parse(localStorage.getItem('vero_reviews') || '[]');
-        reviews.unshift({ name, text, rating: selectedRating, date: new Date().toLocaleDateString('ar-EG'), lang: 'ar' });
-        localStorage.setItem('vero_reviews', JSON.stringify(reviews));
-        document.getElementById('reviewName').value = '';
-        document.getElementById('reviewText').value = '';
-        selectedRating = 0;
-        stars.forEach(s => s.className = 'far fa-star');
-        loadReviews();
-        alert('شكراً لمشاركتنا رأيك!');
+    
+    // ==========================================
+    // باقي الدوال
+    // ==========================================
+    
+    // Loading Screen
+    window.addEventListener('load', () => {
+        const loader = document.getElementById('loader');
+        if(loader) {
+            loader.classList.add('fade-out');
+            setTimeout(() => loader.style.display = 'none', 500);
+        }
     });
+    
+    // Header Scroll Effect
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+        if(header) header.classList.toggle('scrolled', window.scrollY > 20);
+    });
+    
+    // Counters
+    const counters = document.querySelectorAll('.counter');
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if(entry.isIntersecting) {
+                const counter = entry.target;
+                const target = parseInt(counter.getAttribute('data-target'));
+                let current = 0;
+                const increment = target / 50;
+                const updateCounter = () => {
+                    current += increment;
+                    if(current < target) {
+                        counter.textContent = Math.floor(current);
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target;
+                    }
+                };
+                updateCounter();
+                counterObserver.unobserve(counter);
+            }
+        });
+    }, { threshold: 0.5 });
+    counters.forEach(counter => counterObserver.observe(counter));
+    
+    // Mobile Menu
+    const menuToggle = document.querySelector('.menu-toggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const closeMenu = document.querySelector('.close-menu');
+    if(menuToggle && mobileMenu) {
+        menuToggle.addEventListener('click', () => mobileMenu.classList.add('open'));
+        closeMenu.addEventListener('click', () => mobileMenu.classList.remove('open'));
+    }
+    
+    // Contact Form Submission
+    const contactForm = document.getElementById('contactForm');
+    if(contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = '<i class="fas fa-check-circle"></i> تم إرسال طلبك بنجاح! سنتواصل معك قريباً.';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+            contactForm.reset();
+        });
+    }
+    
+    // Swiper for Services
+    const servicesSwiper = new Swiper('.services-swiper', {
+        slidesPerView: 1,
+        spaceBetween: 20,
+        navigation: {
+            nextEl: '.services-slider-container .swiper-button-next',
+            prevEl: '.services-slider-container .swiper-button-prev',
+        },
+        breakpoints: {
+            768: { slidesPerView: 2, spaceBetween: 30 },
+            1024: { slidesPerView: 4, spaceBetween: 30, navigation: false },
+        },
+    });
+    
+    // Swiper for Pricing
+    const pricingSwiper = new Swiper('.pricing-swiper', {
+        slidesPerView: 1,
+        spaceBetween: 20,
+        navigation: {
+            nextEl: '.pricing-slider-container .swiper-button-next',
+            prevEl: '.pricing-slider-container .swiper-button-prev',
+        },
+        breakpoints: {
+            768: { slidesPerView: 2, spaceBetween: 30 },
+            1024: { slidesPerView: 3, spaceBetween: 30, navigation: false },
+        },
+    });
+    
+    // تحميل جميع البيانات من localStorage
+    loadServices();
+    loadPlans();
     loadReviews();
 </script>
 </body>
